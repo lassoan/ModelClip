@@ -378,7 +378,7 @@ void qSlicerModelClipModuleWidget::clip()
 		vtkSmartPointer<vtkMRMLModelNode>::New();
 	sourceModel->Copy(sourceNode);
 	this->sourcePD->DeepCopy(sourceModel->GetPolyData());
-	this->clipper->SetInput(this->sourcePD);
+	this->clipper->SetInputData(this->sourcePD);
 
 	//	make the clipping surface using bool operation and set it as the clip
   //  function of the clipper - core part
@@ -422,19 +422,12 @@ void qSlicerModelClipModuleWidget::clip()
 	//mrmlScene->SaveStateForUndo();
 	resultModel->SetScene(mrmlScene);
 
-	vtkSmartPointer<vtkMRMLModelDisplayNode> resultDisplay =
-		vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-	vtkSmartPointer<vtkMRMLModelStorageNode> resultStorage =
-		vtkSmartPointer<vtkMRMLModelStorageNode>::New();
-	resultDisplay->SetScene(mrmlScene);
-	resultStorage->SetScene(mrmlScene);
-	resultDisplay->SetInputPolyData(resultModel->GetPolyData());
+	resultModel->CreateDefaultDisplayNodes();
+	resultModel->CreateDefaultStorageNode();
+	vtkMRMLModelDisplayNode* resultDisplay = vtkMRMLModelDisplayNode::SafeDownCast(resultModel->GetDisplayNode());
+	vtkMRMLStorageNode* resultStorage = resultModel->GetStorageNode();
 	resultDisplay->SetColor(1.0, 0.0, 0.0);
 	resultStorage->SetFileName(resultName.toLatin1().data());
-	mrmlScene->AddNode(resultDisplay);
-	mrmlScene->AddNode(resultStorage);
-	resultModel->SetAndObserveDisplayNodeID(resultDisplay->GetID());
-	resultModel->SetAndObserveStorageNodeID(resultStorage->GetID());
 
 	//	display and store the clipped model
 	vtkSmartPointer<vtkMRMLModelNode> clippedModel =
@@ -446,19 +439,12 @@ void qSlicerModelClipModuleWidget::clip()
 	//mrmlScene->SaveStateForUndo();
 	clippedModel->SetScene(mrmlScene);
 
-	vtkSmartPointer<vtkMRMLModelDisplayNode> clippedDisplay =
-		vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-	vtkSmartPointer<vtkMRMLModelStorageNode> clippedStorage =
-		vtkSmartPointer<vtkMRMLModelStorageNode>::New();
-	clippedDisplay->SetScene(mrmlScene);
-	clippedStorage->SetScene(mrmlScene);
-	clippedDisplay->SetInputPolyData(clippedModel->GetPolyData());
+	clippedModel->CreateDefaultDisplayNodes();
+	clippedModel->CreateDefaultStorageNode();
+	vtkMRMLModelDisplayNode* clippedDisplay = vtkMRMLModelDisplayNode::SafeDownCast(clippedModel->GetDisplayNode());
+	vtkMRMLStorageNode* clippedStorage = clippedModel->GetStorageNode();
 	clippedDisplay->SetColor(0.0, 1.0, 0.0);
 	clippedStorage->SetFileName(clippedName.toLatin1().data());
-	mrmlScene->AddNode(clippedDisplay);
-	mrmlScene->AddNode(clippedStorage);
-	clippedModel->SetAndObserveDisplayNodeID(clippedDisplay->GetID());
-	clippedModel->SetAndObserveStorageNodeID(clippedStorage->GetID());
 
 	mrmlScene->AddNode(resultModel);
 	mrmlScene->AddNode(clippedModel);

@@ -59,7 +59,7 @@ vtkSmartPointer<vtkPlane> QPlane::getPlane()
 
 vtkSmartPointer<vtkActor> QPlane::getActor()
 {
-	this->mapper->SetInput(this->planeSource->GetOutput());
+	this->mapper->SetInputData(this->planeSource->GetOutput());
 	this->actor->SetMapper(this->mapper);
 	this->actor->GetProperty()->SetColor(0, 0, 1);
 	return this->actor;

@@ -72,7 +72,7 @@ vtkPlaneExtend::vtkPlaneExtend() : vtkPolyDataSourceWidget()
   this->PlaneOutline->SetPolys(outline);
   outline->Delete();
   this->PlaneMapper = vtkPolyDataMapper::New();
-  this->PlaneMapper->SetInput(this->PlaneSource->GetOutput());
+  this->PlaneMapper->SetInputConnection(this->PlaneSource->GetOutputPort());
   this->PlaneActor = vtkActor::New();
   this->PlaneActor->SetMapper(this->PlaneMapper);
 
@@ -86,7 +86,7 @@ vtkPlaneExtend::vtkPlaneExtend() : vtkPolyDataSourceWidget()
     this->HandleGeometry[i]->SetThetaResolution(16);
     this->HandleGeometry[i]->SetPhiResolution(8);
     this->HandleMapper[i] = vtkPolyDataMapper::New();
-    this->HandleMapper[i]->SetInput(this->HandleGeometry[i]->GetOutput());
+    this->HandleMapper[i]->SetInputData(this->HandleGeometry[i]->GetOutput());
     this->Handle[i] = vtkActor::New();
     this->Handle[i]->SetMapper(this->HandleMapper[i]);
     }
@@ -95,7 +95,7 @@ vtkPlaneExtend::vtkPlaneExtend() : vtkPolyDataSourceWidget()
   this->LineSource = vtkLineSource::New();
   this->LineSource->SetResolution(1);
   this->LineMapper = vtkPolyDataMapper::New();
-  this->LineMapper->SetInput(this->LineSource->GetOutput());
+  this->LineMapper->SetInputData(this->LineSource->GetOutput());
   this->LineActor = vtkActor::New();
   this->LineActor->SetMapper(this->LineMapper);
 
@@ -103,7 +103,7 @@ vtkPlaneExtend::vtkPlaneExtend() : vtkPolyDataSourceWidget()
   this->ConeSource->SetResolution(12);
   this->ConeSource->SetAngle(25.0);
   this->ConeMapper = vtkPolyDataMapper::New();
-  this->ConeMapper->SetInput(this->ConeSource->GetOutput());
+  this->ConeMapper->SetInputData(this->ConeSource->GetOutput());
   this->ConeActor = vtkActor::New();
   this->ConeActor->SetMapper(this->ConeMapper);
 
@@ -111,7 +111,7 @@ vtkPlaneExtend::vtkPlaneExtend() : vtkPolyDataSourceWidget()
   this->LineSource2 = vtkLineSource::New();
   this->LineSource2->SetResolution(1);
   this->LineMapper2 = vtkPolyDataMapper::New();
-  this->LineMapper2->SetInput(this->LineSource2->GetOutput());
+  this->LineMapper2->SetInputData(this->LineSource2->GetOutput());
   this->LineActor2 = vtkActor::New();
   this->LineActor2->SetMapper(this->LineMapper2);
 
@@ -119,7 +119,7 @@ vtkPlaneExtend::vtkPlaneExtend() : vtkPolyDataSourceWidget()
   this->ConeSource2->SetResolution(12);
   this->ConeSource2->SetAngle(25.0);
   this->ConeMapper2 = vtkPolyDataMapper::New();
-  this->ConeMapper2->SetInput(this->ConeSource2->GetOutput());
+  this->ConeMapper2->SetInputData(this->ConeSource2->GetOutput());
   this->ConeActor2 = vtkActor::New();
   this->ConeActor2->SetMapper(this->ConeMapper2);
 
@@ -862,7 +862,7 @@ void vtkPlaneExtend::PlaceWidget(double bds[6])
 
   this->AdjustBounds(bds, bounds, center);
 
-  if (this->Input || this->Prop3D)
+  if (this->GetInput() || this->Prop3D)
     {
     if ( this->NormalToYAxis )
       {
@@ -894,7 +894,7 @@ void vtkPlaneExtend::PlaceWidget(double bds[6])
     this->InitialBounds[i] = bounds[i];
     }
   
-  if (this->Input || this->Prop3D)
+  if (this->GetInput() || this->Prop3D)
     {
     this->InitialLength = sqrt((bounds[1]-bounds[0])*(bounds[1]-bounds[0]) +
                                (bounds[3]-bounds[2])*(bounds[3]-bounds[2]) +
@@ -967,21 +967,21 @@ void vtkPlaneExtend::SelectRepresentation()
     {
     this->CurrentRenderer->RemoveActor(this->PlaneActor);
     this->CurrentRenderer->AddActor(this->PlaneActor);
-    this->PlaneMapper->SetInput( this->PlaneOutline );
+	this->PlaneMapper->SetInputData(this->PlaneOutline);
 	this->PlaneActor->GetProperty()->SetRepresentationToWireframe();
     }
   else if ( this->Representation == VTK_PLANE_SURFACE )
     {
     this->CurrentRenderer->RemoveActor(this->PlaneActor);
     this->CurrentRenderer->AddActor(this->PlaneActor);
-    this->PlaneMapper->SetInput( this->PlaneSource->GetOutput() );
+    this->PlaneMapper->SetInputData( this->PlaneSource->GetOutput() );
     this->PlaneActor->GetProperty()->SetRepresentationToSurface();
     }
   else //( this->Representation == VTK_PLANE_WIREFRAME )
     {
     this->CurrentRenderer->RemoveActor(this->PlaneActor);
     this->CurrentRenderer->AddActor(this->PlaneActor);
-    this->PlaneMapper->SetInput( this->PlaneSource->GetOutput() );
+	this->PlaneMapper->SetInputData(this->PlaneSource->GetOutput());
     this->PlaneActor->GetProperty()->SetRepresentationToWireframe();
     }
 }

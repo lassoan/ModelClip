@@ -19,8 +19,10 @@
 #include "vtkSlicerModelClipLogic.h"
 
 // MRML includes
+#include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkIntArray.h>
 #include <vtkNew.h>
 
 // STD includes
